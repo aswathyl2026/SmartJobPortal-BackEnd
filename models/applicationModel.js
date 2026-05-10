@@ -3,11 +3,11 @@ const mongoose = require('mongoose')
 const applicationSchema = new mongoose.Schema({
     candidate: {
         type: mongoose.Schema.Types.ObjectId,
-        required: true
+        ref:"users"
     },
     job: {
         type: mongoose.Schema.Types.ObjectId,
-        required: true
+        ref:"jobs"
     },
     status: {
         type: String,
