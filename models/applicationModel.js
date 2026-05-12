@@ -11,8 +11,8 @@ const applicationSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum:["Applied","Shortlisted","Rejected"],
-        default:"Applied"
+        enum:["Applied","Shortlisted","Rejected","Not-Applied"],
+        default:"Not-Applied"
     }
 },
 {timestamps:true}

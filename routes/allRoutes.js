@@ -27,6 +27,9 @@ router.put('/status/:appnId',authMiddleware,roleMiddleware('recruiter'),applicat
 router.post('/apply/:jobId',authMiddleware,roleMiddleware('candidate'),applicationController.applyJobController)
 //all applied jobs view
 router.get('/alljobs',authMiddleware,roleMiddleware('candidate'),applicationController.getAllApplicationController)
+//single appln view
+
+
 
 
 //------------accessed by all type of user-------------------------------------------

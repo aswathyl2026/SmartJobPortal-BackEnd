@@ -19,6 +19,10 @@ const userSchema=new mongoose.Schema({
     enum:['candidate','recruiter','admin'],
     default:'candidate'
   },
+  picture: {
+        type: String,
+        default: ""
+    },
    status:{
     type:Boolean,
     default:true

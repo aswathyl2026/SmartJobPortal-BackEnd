@@ -24,6 +24,10 @@ const jobSchema = new mongoose.Schema({
     requirements: {
         type: String,
     },
+    jobtype: {
+        type: String,
+        default:"full-time"
+    },
     recruiter: {
         type: mongoose.Schema.Types.ObjectId,
         ref:"users"

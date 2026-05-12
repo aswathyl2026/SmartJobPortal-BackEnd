@@ -21,7 +21,7 @@ exports.applyJobController = async (req, res) => {
     }
 
     const newApplication= new applications({
-        candidate,job:jobId
+        candidate,job:jobId,status:"Applied"
     })
     await newApplication.save()
     res.status(201).json({
@@ -35,7 +35,7 @@ exports.getAllApplicationController=async(req,res)=>{
     const candidate=req.user.userId
     const allAppliedJobs=await applications.find({
         candidate
-    }).populate("job")
+    }).populate("job").populate("candidate")
     res.status(200).json({
         success:true,
         message:"Fetched all jobs applied",
@@ -95,3 +95,5 @@ exports.updateApplicationController=async(req,res)=>{
     })
     
 }
+//applied single job
+
