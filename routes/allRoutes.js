@@ -1,11 +1,13 @@
 const authController=require('../controllers/authController')
+const userController=require('../controllers/userController')
 const express=require('express')
 const jobController = require('../controllers/jobController')
 const authMiddleware=require('../middlewares/authMiddleware')
 const roleMiddleware=require('../middlewares/roleMiddleware')
 const applicationController=require('../controllers/applicationController')
+const multerMiddleware = require('../middlewares/multerMiddleware')
 const router=express.Router()
-
+const imageMulter= require('../middlewares/imageMulter')
 //register user
 router.post('/register',authController.registerController)
 //login user
@@ -22,9 +24,13 @@ router.delete('/delete-job/:jobId',authMiddleware,roleMiddleware('recruiter'),jo
 router.get('/applicant/:jobId',authMiddleware,roleMiddleware('recruiter'),applicationController.viewAppliedJobController)
 //update status
 router.put('/status/:appnId',authMiddleware,roleMiddleware('recruiter'),applicationController.updateApplicationController)
+//view all created j0b
+router.get('/myjobs',authMiddleware,roleMiddleware('recruiter'),jobController.allMyJobsController)
+//view all applicants
+router.get('/recruiter-all-applicants',authMiddleware,roleMiddleware('recruiter'),applicationController.getAllRecruiterApplicantsController)
 //-------------------candidate-------------------------------------------
 //apply job
-router.post('/apply/:jobId',authMiddleware,roleMiddleware('candidate'),applicationController.applyJobController)
+router.post('/apply/:jobId',authMiddleware,roleMiddleware('candidate'),multerMiddleware.single('resume'),applicationController.applyJobController)
 //all applied jobs view
 router.get('/alljobs',authMiddleware,roleMiddleware('candidate'),applicationController.getAllApplicationController)
 //single appln view
@@ -38,6 +44,11 @@ router.get('/all-job',authMiddleware,roleMiddleware('recruiter','candidate','adm
 //view job by id
 router.get('/job/:jobId',authMiddleware,roleMiddleware('recruiter','candidate','admin'),jobController.getJobController)
 
+// update recruiter profile
+
+router.put('/update-profile',authMiddleware,roleMiddleware('recruiter','candidate','admin'),imageMulter.single('picture'),userController.updateProfileController)
+// reset password
+router.put('/reset-password',authMiddleware,roleMiddleware('recruiter','candidate','admin'),userController.resetPasswordController)
 
 
 module.exports=router

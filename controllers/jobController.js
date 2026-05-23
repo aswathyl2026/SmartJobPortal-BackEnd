@@ -3,7 +3,8 @@ const jobs=require("../models/jobModel")
 //job creation
 exports.jobCreateController=async (req,res)=>{
     console.log("Inside jobCreateController");
-    const {title,company,location,description,salary,requirements}=req.body
+    const {title,company,location,description,salary,requirements,
+        jobtype}=req.body
     const recruiter=req.user.userId 
     const existingJob=await jobs.findOne({title,company,location})
     if(existingJob){
@@ -16,6 +17,24 @@ exports.jobCreateController=async (req,res)=>{
             status:true,
             message:"Jop Posted Successfully",
             data:newJob
+        })
+    }
+    
+}
+
+//get all job by recruiter
+exports.allMyJobsController=async (req,res)=>{
+    console.log("Inside allMyJobsController");
+    const recruiter=req.user.userId 
+    const myJob=await jobs.find({recruiter})
+    if(!myJob){
+        res.status(400).json("Thre is no job...Lets Add One")
+    }else{
+       
+        res.status(200).json({
+            status:true,
+            message:"Job fetched",
+            data:myJob
         })
     }
     
@@ -49,21 +68,56 @@ exports.getAllJobController=async(req,res)=>{
     }
 }
 //update job
-exports.jobUpdateController=async (req,res)=>{
+exports.jobUpdateController = async (req, res) => {
+
     console.log("Inside jobUpdateController");
-    const {title,company,location,description,salary,requirements,recruiter}=req.body
-    const {jobId}=req.params
-    
-        const updatedJob=await jobs.findByIdAndUpdate({_id:jobId},{
-            title,company,location,description,salary,requirements,recruiter
-        },{new:true})
-        res.status(200).json({
-            status:true,
-            message:"Jop Posted Successfully",
-            data:updatedJob
-        })
-    
-    
+
+    const {
+
+        title,
+        company,
+        location,
+        description,
+        salary,
+        requirements,
+        recruiter,
+        jobtype
+
+    } = req.body
+
+    const { jobId } = req.params
+
+    const updatedJob = await jobs.findByIdAndUpdate(
+
+        { _id: jobId },
+
+        {
+
+            title,
+            company,
+            location,
+            description,
+            salary,
+            requirements,
+            recruiter,
+            jobtype
+
+        },
+
+        { new: true }
+
+    )
+
+    res.status(200).json({
+
+        status: true,
+
+        message: "Job Updated Successfully",
+
+        data: updatedJob
+
+    })
+
 }
 //delete job
 exports.deleteJobController=async(req,res)=>{

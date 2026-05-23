@@ -9,7 +9,12 @@ const applicationSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref:"jobs"
     },
-    status: {
+  
+    resume:{
+        type:String,
+        default:""
+    },
+      status: {
         type: String,
         enum:["Applied","Shortlisted","Rejected","Not-Applied"],
         default:"Not-Applied"

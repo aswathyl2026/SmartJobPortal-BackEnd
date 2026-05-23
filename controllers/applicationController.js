@@ -6,7 +6,7 @@ exports.applyJobController = async (req, res) => {
     console.log("Inside applyJobController");
     const candidate = req.user.userId
     const { jobId } = req.params
-
+    const resume=req.file.filename
     // check job is still in jobs
     const job = await jobs.findById(jobId)
     if (!job) {
@@ -21,7 +21,7 @@ exports.applyJobController = async (req, res) => {
     }
 
     const newApplication= new applications({
-        candidate,job:jobId,status:"Applied"
+        candidate,job:jobId,resume,status:"Applied"
     })
     await newApplication.save()
     res.status(201).json({
@@ -95,5 +95,46 @@ exports.updateApplicationController=async(req,res)=>{
     })
     
 }
-//applied single job
+//all applicants
+
+exports.getAllRecruiterApplicantsController = async (req, res) => {
+
+    console.log("Inside getAllRecruiterApplicantsController")
+
+    const recruiterId = req.user.userId
+
+    // FIND ALL JOBS CREATED BY RECRUITER
+
+    const recruiterJobs = await jobs.find({
+        recruiter: recruiterId
+    })
+
+    // EXTRACT JOB IDS
+
+    const jobIds = recruiterJobs.map((item) => item._id)
+
+    // FIND ALL APPLICATIONS FOR THOSE JOBS
+
+    const applicants = await applications.find({
+
+        job: { $in: jobIds }
+
+    })
+
+    .populate("candidate")
+    .populate("job")
+
+    .sort({ createdAt: -1 })
+
+    res.status(200).json({
+
+        success: true,
+
+        message: "All applicants fetched successfully",
+
+        data: applicants
+
+    })
+
+}
 
