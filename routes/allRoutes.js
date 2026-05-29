@@ -12,7 +12,8 @@ const imageMulter= require('../middlewares/imageMulter')
 router.post('/register',authController.registerController)
 //login user
 router.post('/login',authController.loginController)
-
+//google login
+router.post('/google-login',authController.googleLoginController)
 //----------- recruter------------------------------
 //create job
 router.post('/create-job',authMiddleware,roleMiddleware('recruiter'),jobController.jobCreateController)
@@ -34,7 +35,8 @@ router.post('/apply/:jobId',authMiddleware,roleMiddleware('candidate'),multerMid
 //all applied jobs view
 router.get('/alljobs',authMiddleware,roleMiddleware('candidate'),applicationController.getAllApplicationController)
 //single appln view
-
+//ai job desc
+router.post('/job-ai',jobController.generateAIJobController)
 
 
 
@@ -43,7 +45,8 @@ router.get('/alljobs',authMiddleware,roleMiddleware('candidate'),applicationCont
 router.get('/all-job',authMiddleware,roleMiddleware('recruiter','candidate','admin'),jobController.getAllJobController)
 //view job by id
 router.get('/job/:jobId',authMiddleware,roleMiddleware('recruiter','candidate','admin'),jobController.getJobController)
-
+//get profile
+router.get('/get-profile', authMiddleware, userController.getProfileController)
 // update recruiter profile
 
 router.put('/update-profile',authMiddleware,roleMiddleware('recruiter','candidate','admin'),imageMulter.single('picture'),userController.updateProfileController)
