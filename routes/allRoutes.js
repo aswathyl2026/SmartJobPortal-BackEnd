@@ -6,6 +6,7 @@ const authMiddleware=require('../middlewares/authMiddleware')
 const roleMiddleware=require('../middlewares/roleMiddleware')
 const applicationController=require('../controllers/applicationController')
 const multerMiddleware = require('../middlewares/multerMiddleware')
+const adminController=require('../controllers/adminController')
 const router=express.Router()
 const imageMulter= require('../middlewares/imageMulter')
 //register user
@@ -53,5 +54,22 @@ router.put('/update-profile',authMiddleware,roleMiddleware('recruiter','candidat
 // reset password
 router.put('/reset-password',authMiddleware,roleMiddleware('recruiter','candidate','admin'),userController.resetPasswordController)
 
+
+// ── ADMIN ROUTES ─────────────────────────────────────────────
+// Stats
+router.get('/admin/stats',authMiddleware, roleMiddleware('admin'), adminController.getStatsController)
+// Users
+router.get('/admin/users',authMiddleware, roleMiddleware('admin'), adminController.getAllUsersController)
+router.delete('/admin/delete-user/:userId',authMiddleware, roleMiddleware('admin'), adminController.deleteUserController)
+router.put('/admin/block-user/:userId',authMiddleware, roleMiddleware('admin'), adminController.toggleBlockUserController)
+// Recruiters
+router.get('/admin/recruiters',authMiddleware, roleMiddleware('admin'), adminController.getAllRecruitersController)
+// Delete recruiter reuses same delete-user route (both are users)
+// Jobs
+router.get('/admin/jobs',authMiddleware, roleMiddleware('admin'), adminController.adminGetAllJobsController)
+router.delete('/admin/delete-job/:jobId',authMiddleware, roleMiddleware('admin'), adminController.adminDeleteJobController)
+// Applications
+router.get('/admin/applications',authMiddleware, roleMiddleware('admin'), adminController.adminGetAllApplicationsController)
+router.delete('/admin/delete-application/:appId', authMiddleware, roleMiddleware('admin'), adminController.adminDeleteApplicationController)
 
 module.exports=router
