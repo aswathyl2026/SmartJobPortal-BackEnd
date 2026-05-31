@@ -1,12 +1,17 @@
 const express = require('express')
 const cors = require('cors')
 const path = require('path')
+const fs = require("fs")
 
 require('dotenv').config()
 require('./config/db')
 
 const routes = require('./routes/allRoutes')
+const uploadDir = path.join(__dirname, "uploads")
 
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true })
+}
 const server = express()
 
 server.use(cors())
