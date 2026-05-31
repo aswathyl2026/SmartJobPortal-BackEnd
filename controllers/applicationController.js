@@ -43,26 +43,40 @@ exports.getAllApplicationController=async(req,res)=>{
     }) 
 }
 //recruiter view of job applied by candidate
-exports.viewAppliedJobController=async(req,res)=>{
-    console.log("Inside viewAppliedJobControlle");
-    const recruiter=req.user.userId
-    const {jobId}=req.params
-    const jobApplied=await jobs.findById(jobId)
-    if(!jobApplied){
-      return  res.status(409).json("Job Not Found")
-    }
-    //recruiter check
-    if(jobApplied.recruiter.toString()!==recruiter){
-      return   res.status(409).json("Acess denied")
+exports.viewAppliedJobController = async (req, res) => {
+    console.log("Inside viewAppliedJobController")
+
+    const recruiter = req.user.userId
+    const { jobId } = req.params
+
+    const jobApplied = await jobs.findById(jobId)
+
+    if (!jobApplied) {
+        return res.status(409).json("Job Not Found")
     }
 
-    const applicants=await applications.find({job:jobId}).populate("job").populate("candidate")
-    res.status(200).json({
-        success:true,
-        message:"all applicant fetched",
-        data:applicants
+    if (jobApplied.recruiter.toString() !== recruiter) {
+        return res.status(409).json("Access denied")
+    }
+
+    const applicants = await applications.find({
+        job: jobId
     })
-    
+    .populate("job")
+    .populate("candidate")
+
+    const updatedApplicants = applicants.map((item) => ({
+        ...item.toObject(),
+        resumeUrl: item.resume
+            ? `${req.protocol}://${req.get("host")}/uploads/${item.resume}`
+            : null
+    }))
+
+    res.status(200).json({
+        success: true,
+        message: "all applicant fetched",
+        data: updatedApplicants
+    })
 }
 //update staus of applicant
 exports.updateApplicationController=async(req,res)=>{
@@ -103,38 +117,30 @@ exports.getAllRecruiterApplicantsController = async (req, res) => {
 
     const recruiterId = req.user.userId
 
-    // FIND ALL JOBS CREATED BY RECRUITER
-
     const recruiterJobs = await jobs.find({
         recruiter: recruiterId
     })
 
-    // EXTRACT JOB IDS
-
     const jobIds = recruiterJobs.map((item) => item._id)
 
-    // FIND ALL APPLICATIONS FOR THOSE JOBS
-
     const applicants = await applications.find({
-
         job: { $in: jobIds }
-
     })
-
     .populate("candidate")
     .populate("job")
-
     .sort({ createdAt: -1 })
 
+    const updatedApplicants = applicants.map((item) => ({
+        ...item.toObject(),
+        resumeUrl: item.resume
+            ? `${req.protocol}://${req.get("host")}/uploads/${item.resume}`
+            : null
+    }))
+
     res.status(200).json({
-
         success: true,
-
         message: "All applicants fetched successfully",
-
-        data: applicants
-
+        data: updatedApplicants
     })
-
 }
 
